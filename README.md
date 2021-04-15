@@ -1,7 +1,8 @@
 # Elo-Project
-Custom Elo Class that was inspired by another github user.
+Custom Elo Class that was inspired by another github user:<br>
     https://github.com/ddm7018/Elo/blob/master/elosports/elo.py
-ELO FORMULAS used were found on wiki:
+    
+ELO FORMULAS used were found on wiki:<br>
     https://en.wikipedia.org/wiki/Elo_rating_system
 
 Elo takes in a df of scores, compares the scores of multiple people, then calculates the elo.
