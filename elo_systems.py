@@ -43,6 +43,7 @@ def gg_league(save=True,new_run = False,sheet_name= 'TASK REVIEW'):
 
     #6
     if save:
+        print('sending to gsheets')
         google_sheets_out.worksheet('title','Current ELOs').set_dataframe(gg.show_elo(),start='a1',copy_index=False)
 
         google_sheets_out.worksheet('title','ELO HISTORY').set_dataframe(gg.get_df(drop_inactive=True),start='a1',copy_index=True)
