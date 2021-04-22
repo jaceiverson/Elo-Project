@@ -6,16 +6,15 @@ Created on Thu Feb 11 17:09:13 2021
 @author: jiverson
 """
 
-from elo import Elo
+from league import generic_league
+
 import pandas as pd
 
 import sys
 sys.path.append("/Users/techseoremote2/Documents/custom_python")
-from custom_modules import pickle_write, pickle_read
 from gsheets_con import connect
 import datetime as dt
 
-import matplotlib.pyplot as plt
 
 def gg_league(save=True,new_run = False,sheet_name= 'TASK REVIEW'):
     #1
@@ -81,27 +80,6 @@ def kwf_league(save=True):
 
     return kwf
 
-
-def generic_league(df,score_column,file_path,lsw=False,save=True):
-    #3
-    league = Elo(lsw=lsw)
-    #will read data from pickle if it exists
-    try:
-        league.ratingDict = pickle_read(file_path).ratingDict
-        league.games_completed = pickle_read(file_path).games_completed
-        print('LEAGUE FROM PICKLE')
-    except:
-        print('NEW LEAGUE')
-
-    #4 run the algo
-    league.run(df,score_column)
-
-    #5 save for later
-    if save:
-        print("SAVING")
-        pickle_write(file_path,league)
-
-    return league
 
 
 if __name__=='__main__':
