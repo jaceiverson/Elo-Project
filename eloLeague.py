@@ -5,7 +5,9 @@ Created on Thu Apr 22 16:19:24 2021
 
 @author: techseoremote2
 """
-import pickle_read,pickle_write
+import  sys
+sys.path.append("/Users/techseoremote2/Documents/")
+from custom_python.general import pickle_read,pickle_write
 from elo import Elo
 
 def generic_league(df,score_column,file_path,lsw=False,save=True):

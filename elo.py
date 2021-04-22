@@ -230,6 +230,7 @@ class Elo:
         designed for score based events with multiple entrants
         every player that you score higher than, counts as a win (1 point)
         players that score higher than you count as a loss (0 points)
+        players that tie your score you will get half (.5 points)
         
         this function will return the number of wins you had
         '''
@@ -331,8 +332,8 @@ class Elo:
             players.loc['start'] = np.ones(len(players.columns))*1500
         
         if drop_inactive: 
-            inactive_players = (players.tail(3).diff().sum()==0).loc[(players.tail(3).diff().sum()==0)].index
-            return players.drop(columns=inactive_players)
+            self.inactive_players = (players.tail(3).diff().sum()==0).loc[(players.tail(3).diff().sum()==0)].index
+            return players.drop(columns=self.inactive_players)
         else:
             return players
     
