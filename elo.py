@@ -1,15 +1,8 @@
 """
-Created on Thu Feb 11 14:03:47 2021
-
-@author: jiverson
-
-ELO CLASS APPLIED at Terakeet to KWF & GG
-
 ELO class based off: 
     https://github.com/ddm7018/Elo/blob/master/elosports/elo.py
 FORMULAS found on wiki:
     https://en.wikipedia.org/wiki/Elo_rating_system
-
 """
 import datetime as dt
 import pandas as pd
