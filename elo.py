@@ -95,9 +95,7 @@ class Elo:
         elo_df.columns = ['Rank','Player','ELO']
         elo_df['Rank']+=1
         
-        if player_name == None:
-            print(elo_df)
-        else:
+        if player_name != None:
             print('{}\'s Current Elo: {}'.format(player_name,self.get_elo(player_name)))
         
         return elo_df
