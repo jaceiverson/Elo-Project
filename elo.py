@@ -78,8 +78,8 @@ class Elo:
         historical list 
         '''
         self.ratingDict[name]['historical'].append({dt.date.today().isoformat():self.ratingDict[name]['ELO']})
-        
-    def show_elo(self,player_name=None):
+    
+    def show_elo(self,drop=True):
         '''
         prints to console the current elos of all players currently in the 
         ratingDict.
@@ -89,16 +89,16 @@ class Elo:
         optional: pass in player name param and get back a text of selected
         player's ELO 
         '''
-        elo_df = pd.DataFrame(self.ratingDict).T.sort_values(by='ELO',ascending=False)['ELO']
-        elo_df = elo_df.reset_index()
-        elo_df.reset_index(inplace=True)
-        elo_df.columns = ['Rank','Player','ELO']
-        elo_df['Rank']+=1
+        self.df = self.get_df(drop_inactive=drop)
         
-        if player_name != None:
-            print('{}\'s Current Elo: {}'.format(player_name,self.get_elo(player_name)))
+        self.active_elo = pd.DataFrame(self.df.tail(1).T.values,columns = ['ELO'],index = self.df.T.index)
+        self.active_elo = self.active_elo.sort_values(by='ELO',ascending=False).reset_index()
+        self.active_elo.index.name = "Rank"
+        self.active_elo.columns = ['Player','ELO']
+        self.active_elo.index += 1 
+        self.active_elo = self.active_elo.reset_index()
         
-        return elo_df
+        return self.active_elo
         
     def get_elo(self,player_name):
         '''
@@ -323,7 +323,8 @@ class Elo:
             players.loc['start'] = np.ones(len(players.columns))*1500
         
         if drop_inactive: 
-            self.inactive_players = (players.tail(3).diff().sum()==0).loc[(players.tail(3).diff().sum()==0)].index
+            self.inactive_players = (players.tail(4).diff().sum()==0)\
+                                    .loc[(players.tail(4).diff().sum()==0)].index
             return players.drop(columns=self.inactive_players)
         else:
             return players
