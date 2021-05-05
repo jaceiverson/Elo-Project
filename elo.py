@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 class Elo:
     
-    def __init__(self,lsw = True):
+    def __init__(self,lsw = False):
         self.ratingDict  	= {}	
         self.games_completed = []
         self.low_score_wins = lsw
