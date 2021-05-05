@@ -71,6 +71,7 @@ class Elo:
         TODO
         self.player_list.append(Player(name,rating,k))
 		'''
+    
     def update_historical(self,name):
         '''
         updates the historical section of the ratingDict.
@@ -132,7 +133,6 @@ class Elo:
         
         self.update_elo_mass(df['new_elo'].to_dict())
         
-    
     def process_elo(self,df):
         '''
         takes in a df of score objects
@@ -209,7 +209,7 @@ class Elo:
         
     def expected_outcome(self, p1, p2):
         '''
-        takes in 2 players (need to be in the self.ratingDict)
+        takes in 2 players ELO
         returns the propability of p1 (first player entered) winning
         '''
         exp = (p2-p1)/400.0
@@ -348,6 +348,7 @@ class Elo:
         change_df.columns = ['biggest winner','elo increase','pct increase', 'biggest loser','elo decrease','pct decrease']
         
         return change_df.dropna()
+
 '''
 
 TODO
