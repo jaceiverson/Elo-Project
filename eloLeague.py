@@ -6,7 +6,11 @@ You can create your own, or find mine here:
 from custom_python.general import pickle_read,pickle_write
 from elo import Elo
 
-def generic_league(df,score_column,file_path,lsw=False,save=True):
+def generic_league(df,
+                   score_column,
+                   file_path = './pickled-elo.p',
+                   lsw=False,
+                   save=True):
     '''
     df: pd.df: where the scores are recored. This has 3 required columns.
         Two of those columns must be named 'Date' and 'Player' 
@@ -20,7 +24,8 @@ def generic_league(df,score_column,file_path,lsw=False,save=True):
     lsw: bool: Low Score Wins. If you play a game where low score wins, pass in True
     
     save: bool: if you would like to save your league to the designated spot.
-                if you want a temporary score, or see temporary results, I recomend leaving this False
+                if you want a temporary score, 
+                or see temporary results, I recomend leaving this False
     
     ::Steps::
         1) Create the elo League object
