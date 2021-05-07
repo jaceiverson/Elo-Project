@@ -17,20 +17,26 @@ generic_league(df,
                 )
 ```
 __Parameters__
- - Pandas DataFrame
+ - df
+     - type: pandas DataFrame
      - In your df you must have 2 columns (case insensitive):
         - Date
         - Player
         - A Score Column (any name)
-- Name of the score column (str)
+- score_column
+    - type: string
+    - Name of the score column (str)
 
 __Optional Parameters__
-- File path 
+- file_path
+    - type: string
     - Defaults to ./pickled-elo.p
 - lsw (Low Score Wins)
+    - type: bool
     - Defaults to False
     - Set to True if you are playing a game where the lower score would win
-- save 
+- save
+    - type: bool
     - Defaults to True
     - This is if you would like to save your Elo Object to pickle
     - Can be set to False if you would like to see a temporary result, or for testing
