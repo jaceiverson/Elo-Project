@@ -1,2 +1,4 @@
 pandas==1.2.4
 matplotlib==3.3.4
+#optional
+pygsheets==2.0.5
