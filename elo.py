@@ -269,7 +269,7 @@ class Elo:
         
         returns the df used (self.get_df) as well
         '''
-        df = self.get_df()
+        df = self.get_df(drop_inactive=True)
         f, ax = plt.subplots(1, 1)
         plt.xlabel('date')
         plt.ylabel('elo')
