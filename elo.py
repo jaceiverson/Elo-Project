@@ -12,15 +12,16 @@ import matplotlib.pyplot as plt
 class Elo:
     
     def __init__(self,lsw = False):
+        '''
+        creates the Elo object
+        
+        lsw: bool: "low score wins" 
+            traditionally this is false, but if you have a game that the lower
+            score is better, set this to True
+        '''
         self.ratingDict  	= {}	
         self.games_completed = []
         self.low_score_wins = lsw
-        
-        '''
-        TODO
-        self.player_list = []
-        self.historical_df = None
-        '''
         
     def run(self,df,score_column):
         '''
@@ -67,10 +68,6 @@ class Elo:
         '''
         self.ratingDict[name] = {'ELO':rating,'historical':[]}
         self.update_historical(name)
-        '''
-        TODO
-        self.player_list.append(Player(name,rating,k))
-		'''
     
     def update_historical(self,name):
         '''
@@ -142,7 +139,7 @@ class Elo:
         1) gets number of wins (1=win, 0=loss, .5=draw)
         2) initialize starting_elo and elo_comp (list of all compteitors elos) columns
     
-    Loop through players
+        Loop through players
     
         3a) gets the starting elo (snapshot of current elo) 
         3b) if the player does not exist, we create them, and set their elo to 1500
@@ -270,7 +267,7 @@ class Elo:
         '''
         PLOTS (matplotlib) the ELO df using plot_date
         
-        returns the df as well
+        returns the df used (self.get_df) as well
         '''
         df = self.get_df()
         f, ax = plt.subplots(1, 1)
@@ -321,7 +318,7 @@ class Elo:
         if add_start:
             #add optional start column
             players.loc['start'] = np.ones(len(players.columns))*1500
-        
+            players = players.loc[['start']+list(players.index.drop('start'))]
         if drop_inactive: 
             self.inactive_players = (players.tail(4).diff().sum()==0)\
                                     .loc[(players.tail(4).diff().sum()==0)].index
@@ -330,7 +327,11 @@ class Elo:
             return players
     
     def winners_and_losers(self):
-        
+        '''
+        returns a pd df listing each time the elo was reconsidered, who 
+        had the biggest increase and who had the biggest decrease as well
+        as what % increase/decrease that was
+        '''
         df = self.get_df()
         change_df = pd.DataFrame(index = df.index)
         
@@ -348,28 +349,3 @@ class Elo:
         change_df.columns = ['biggest winner','elo increase','pct increase', 'biggest loser','elo decrease','pct decrease']
         
         return change_df.dropna()
-
-'''
-
-TODO
-Add a player class to make things easier?
-
-'''   
-class Player():
-    def __init__(self,name,k,elo=1500):
-        self.k = k
-        self.elo = elo
-        self.historical_elo = []
-        
-
-
-
-
-
-
-
-
-
-
-
-    
