@@ -1,3 +1,13 @@
 LICENSE
 __pycache__/
 elo-env/
+GG/
+KWF/
+__init__.py
+elo_systems.py
+gg_elo_system.py
+gg_update.py
+kwf_update.py
+config.ini
+*.json
+*DS_STORE
