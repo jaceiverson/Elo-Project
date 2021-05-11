@@ -3,6 +3,8 @@ I have created 2 custom modules that pickle objects
 You can create your own, or find mine here:
     https://github.com/jaceiverson/custom-python/blob/master/general.py
 """
+import sys
+sys.path.append('/Users/techseoremote2/Documents')
 from custom_python.general import pickle_read,pickle_write
 from elo import Elo
 
