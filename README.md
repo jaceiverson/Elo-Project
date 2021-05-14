@@ -62,9 +62,26 @@ I use that to save the following to different tabs in a Google Sheet. This was t
 ```
 self.show_elo()
 ```
+Example Output
+```
+	Rank	Player	ELO	    Games Played
+0	1	John	1702.0	    5
+1	2	Sue	1685.0	    4
+2	3	Guy	1578.0	    3
+```
  - To save/see the historical elos
 ```
 self.get_df()
+```
+Example Output
+```
+date	        John	Sue	Guy
+2021-04-16	1618.0	1430.0	1511.0
+2021-04-23	1594.0	1503.0	1511.0
+2021-04-30	1653.0	1503.0	1511.0
+2021-05-07	1690.0	1609.0	1540.0
+2021-05-14	1702.0	1685.0	1578.0
+
 ```
  - To save/see the winners and losers
 ```
