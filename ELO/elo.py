@@ -100,7 +100,7 @@ class Elo:
             [len(self.ratingDict[x]['historical'])-1 for x in self.active_elo['Player']]
             
         
-        return self.active_elo
+        return self.active_elo.round(0)
         
     def get_elo(self,player_name):
         '''
@@ -326,9 +326,9 @@ class Elo:
         if drop_inactive: 
             self.inactive_players = (players.tail(4).diff().sum()==0)\
                                     .loc[(players.tail(4).diff().sum()==0)].index
-            return players.drop(columns=self.inactive_players)
+            return players.drop(columns=self.inactive_players).round(0)
         else:
-            return players
+            return players.round(0)
     
     def winners_and_losers(self):
         '''
@@ -340,16 +340,27 @@ class Elo:
         change_df = pd.DataFrame(index = df.index)
         
         #highest person & Increase & percent
-        change_df = change_df.merge(pd.DataFrame(df.pct_change().idxmax(axis=1)),on='date')
-        change_df = change_df.merge(pd.DataFrame(df.diff(axis=0).max(axis=1)),on='date')
-        change_df = change_df.merge(pd.DataFrame(df.pct_change().max(axis=1)),on='date')
+        change_df = change_df.merge(
+            pd.DataFrame(df.pct_change().idxmax(axis=1)),on='date')
+        change_df = change_df.merge(
+            pd.DataFrame(df.diff(axis=0).max(axis=1)).round(0),on='date')
+        change_df = change_df.merge(
+            pd.DataFrame(df.pct_change().max(axis=1)*100).round(0),on='date')
 
         #highest person & decrease & percent
-        change_df = change_df.merge(pd.DataFrame(df.pct_change().idxmin(axis=1)),on='date')
-        change_df = change_df.merge(pd.DataFrame(df.diff(axis=0).min(axis=1)),on='date')
-        change_df = change_df.merge(pd.DataFrame(df.pct_change().min(axis=1)),on='date')
+        change_df = change_df.merge(
+            pd.DataFrame(df.pct_change().idxmin(axis=1)),on='date')
+        change_df = change_df.merge(
+            pd.DataFrame(df.diff(axis=0).min(axis=1)).round(0),on='date')
+        change_df = change_df.merge(
+            pd.DataFrame(df.pct_change().min(axis=1)*100).round(0),on='date')
 
         
-        change_df.columns = ['biggest winner','elo increase','pct increase', 'biggest loser','elo decrease','pct decrease']
+        change_df.columns = ['biggest winner',
+                             'elo increase',
+                             'pct increase', 
+                             'biggest loser',
+                             'elo decrease',
+                             'pct decrease']
         
         return change_df.dropna()
