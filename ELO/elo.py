@@ -77,15 +77,14 @@ class Elo:
         '''
         self.ratingDict[name]['historical'].append({dt.date.today().isoformat():self.ratingDict[name]['ELO']})
     
-    def show_elo(self,drop=True):
+    def show_elo(self,
+                 drop = True,
+                 game_count = True):
         '''
-        prints to console the current elos of all players currently in the 
-        ratingDict.
+        returns the current elos as a pd.df
         
-        Also returns the current elos as a dict
-        
-        optional: pass in player name param and get back a text of selected
-        player's ELO 
+        defaults to removing inactive players, change by drop = False
+        defaults to adding a columns for Games Playeed, change by game_count = False
         '''
         self.df = self.get_df(drop_inactive=drop)
         
@@ -95,9 +94,11 @@ class Elo:
         self.active_elo.columns = ['Player','ELO']
         self.active_elo.index += 1 
         self.active_elo = self.active_elo.reset_index()
-        self.active_elo['Games Played'] = \
-        [len(self.ratingDict[x]['historical'])-1 for x in self.active_elo['Player']]
         
+        if game_count:
+            self.active_elo['Games Played'] = \
+            [len(self.ratingDict[x]['historical'])-1 for x in self.active_elo['Player']]
+            
         
         return self.active_elo
         
