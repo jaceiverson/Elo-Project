@@ -95,6 +95,9 @@ class Elo:
         self.active_elo.columns = ['Player','ELO']
         self.active_elo.index += 1 
         self.active_elo = self.active_elo.reset_index()
+        self.active_elo['Games Played'] = \
+        [len(self.ratingDict[x]['historical'])-1 for x in self.active_elo['Player']]
+        
         
         return self.active_elo
         
