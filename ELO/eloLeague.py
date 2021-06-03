@@ -1,12 +1,20 @@
-"""
-I have created 2 custom modules that pickle objects
-You can create your own, or find mine here:
-    https://github.com/jaceiverson/custom-python/blob/master/general.py
-"""
-import sys
-sys.path.append('/Users/techseoremote2/Documents')
-from custom_python.general import pickle_read,pickle_write
+import pickle
 from elo import Elo
+
+def pickle_write(file_name,data):
+    '''
+    takes a filename and data and writes it to pickle
+    '''
+    with open(file_name, 'wb') as fid:
+        pickle.dump(data, fid, pickle.HIGHEST_PROTOCOL)
+
+def pickle_read(file_name):
+    '''
+    takes a filename and reads from pickle
+    '''
+    with open(file_name,'rb') as f:
+        data=pickle.load(f)
+    return data
 
 def generic_league(df,
                    score_column,
@@ -15,20 +23,20 @@ def generic_league(df,
                    save=True):
     '''
     df: pd.df: where the scores are recored. This has 3 required columns.
-        Two of those columns must be named 'Date' and 'Player' 
+        Two of those columns must be named 'Date' and 'Player'
         (captialization does not matter)
         The other needs to contain the score.
-   
+
     score_column: string: name of column in df that holds the score
-    
+
     file_path: string: path whre you would like to save your league
-    
+
     lsw: bool: Low Score Wins. If you play a game where low score wins, pass in True
-    
+
     save: bool: if you would like to save your league to the designated spot.
-                if you want a temporary score, 
+                if you want a temporary score,
                 or see temporary results, I recomend leaving this False
-    
+
     ::Steps::
         1) Create the elo League object
         2) it will attempt to read from your pickled file
