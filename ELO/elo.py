@@ -22,7 +22,11 @@ class Elo:
         self.ratingDict  	= {}	
         self.games_completed = []
         self.low_score_wins = lsw
+        self._key = dt.date.today().isoformat()
         
+    def set_key(self,key):
+        self._key = key
+
     def run(self,df,score_column):
         '''
         takes in a pd.df and we need 3 required columns
@@ -50,6 +54,7 @@ class Elo:
             #1
             if game_date not in self.games_completed:
                 print('EVALUATING {}'.format(game_date))
+                self.set_key(game_date)
                 #2
                 current_df = df.loc[df['date'] == game_date].copy()
                 #3
@@ -75,7 +80,7 @@ class Elo:
         takes in a name (of a player) and creates a new dictionary in the 
         historical list 
         '''
-        self.ratingDict[name]['historical'].append({dt.date.today().isoformat():self.ratingDict[name]['ELO']})
+        self.ratingDict[name]['historical'].append({self._key:self.ratingDict[name]['ELO']})
     
     def show_elo(self,
                  drop = True,
