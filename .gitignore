@@ -13,3 +13,4 @@ config.ini
 *DS_STORE
 custom-elo-objects/
 elo_sheets.py
+venv/
