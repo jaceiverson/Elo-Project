@@ -350,7 +350,7 @@ class Elo:
         change_df = change_df.merge(
             pd.DataFrame(df.diff(axis=0).max(axis=1)).round(0),on='date')
         change_df = change_df.merge(
-            pd.DataFrame(df.pct_change().max(axis=1)*100).round(0),on='date')
+            pd.DataFrame(df.pct_change().max(axis=1)*100),on='date')
 
         #highest person & decrease & percent
         change_df = change_df.merge(
@@ -358,7 +358,7 @@ class Elo:
         change_df = change_df.merge(
             pd.DataFrame(df.diff(axis=0).min(axis=1)).round(0),on='date')
         change_df = change_df.merge(
-            pd.DataFrame(df.pct_change().min(axis=1)*100).round(0),on='date')
+            pd.DataFrame(df.pct_change().min(axis=1)*100),on='date')
 
         
         change_df.columns = ['biggest winner',
