@@ -331,7 +331,12 @@ class Elo:
         if drop_inactive: 
             self.inactive_players = (players.tail(4).diff().sum()==0)\
                                     .loc[(players.tail(4).diff().sum()==0)].index
+            new_players = (players.tail(4).count()==1).loc[players.tail(4).count()==1].index
+            self.inactive_players = list(self.inactive_players)
+            for player in new_players:
+                self.inactive_players.remove(player)
             return players.drop(columns=self.inactive_players).round(0)
+
         else:
             return players.round(0)
     
