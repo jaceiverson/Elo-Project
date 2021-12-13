@@ -374,3 +374,15 @@ class Elo:
                              'pct decrease']
         
         return change_df.dropna()
+
+    def remove_contest(self,key):
+        self.games_completed.remove(key)
+        
+        for name in self.ratingDict:
+            remove_list = []
+            for contest in self.ratingDict[name]['historical']:
+                if list(contest.keys())[0] == key:
+                    remove_list.append(contest)
+                    
+            for remove_contests in remove_list:
+                self.ratingDict[name]['historical'].remove(remove_contests)
