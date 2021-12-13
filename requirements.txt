@@ -1,4 +1,6 @@
-pandas==1.2.4
 matplotlib==3.3.4
-#optional
-pygsheets==2.0.5
+googlewrapper==0.2.8
+# googlewrapper has a long list of dependencies that will be installed
+
+# formating
+black==21.12b0

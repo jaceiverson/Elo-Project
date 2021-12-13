@@ -4,11 +4,13 @@ elo-env/
 GG/
 KWF/
 __init__.py
+# internal stuff
 elo_systems.py
 gg_elo_system.py
 gg_update.py
 kwf_update.py
 config.ini
+snake.py
 *.json
 *DS_STORE
 custom-elo-objects/
