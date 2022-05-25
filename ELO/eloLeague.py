@@ -1,27 +1,26 @@
 import pickle
-from elo import Elo
+from .elo import Elo
 
-def pickle_write(file_name,data):
-    '''
+
+def pickle_write(file_name, data):
+    """
     takes a filename and data and writes it to pickle
-    '''
-    with open(file_name, 'wb') as fid:
+    """
+    with open(file_name, "wb") as fid:
         pickle.dump(data, fid, pickle.HIGHEST_PROTOCOL)
 
+
 def pickle_read(file_name):
-    '''
+    """
     takes a filename and reads from pickle
-    '''
-    with open(file_name,'rb') as f:
-        data=pickle.load(f)
+    """
+    with open(file_name, "rb") as f:
+        data = pickle.load(f)
     return data
 
-def generic_league(df,
-                   score_column,
-                   file_path = './pickled-elo.p',
-                   lsw=False,
-                   save=True):
-    '''
+
+def generic_league(df, score_column, file_path="./pickled-elo.p", lsw=False, save=True):
+    """
     df: pd.df: where the scores are recored. This has 3 required columns.
         Two of those columns must be named 'Date' and 'Player'
         (captialization does not matter)
@@ -46,23 +45,23 @@ def generic_league(df,
             in the ".games_completed" variable (list) of the league object
         4) Once complete, it will save back to the designated file location
         5) Returns the leauge object
-    '''
-    #1
+    """
+    # 1
     league = Elo(lsw=lsw)
-    #2
+    # 2
     try:
         league.ratingDict = pickle_read(file_path).ratingDict
         league.games_completed = pickle_read(file_path).games_completed
-        print('LEAGUE FROM PICKLE')
+        print("LEAGUE FROM PICKLE")
     except:
-        print('NEW LEAGUE')
+        print("NEW LEAGUE")
 
-    #3 run the algo
-    league.run(df,score_column)
+    # 3 run the algo
+    league.run(df, score_column)
 
-    #4 save for later
+    # 4 save for later
     if save:
         print("SAVING")
-        pickle_write(file_path,league)
-    #5
+        pickle_write(file_path, league)
+    # 5
     return league
