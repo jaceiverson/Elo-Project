@@ -9,6 +9,15 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+import logging
+
+logging.basicConfig(
+    filename="elo.log",
+    level=logging.INFO,
+    format="[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
 
 class Elo:
     def __init__(self, lsw=False):
@@ -38,6 +47,7 @@ class Elo:
         1) checks if the date has already been included (self.games_completed)
             1a) if it hasn't been computed yet, it continues
         2) sets the current_df (temp) to a single date getting all scores for that date
+        2a) removes any duplicates and keeps the last answer that was given
         3) sets the index to players names and strips removing any leading or trailing spaces
         4) calls process elo to do the computing
         5) shows the updated elos
@@ -47,7 +57,7 @@ class Elo:
         try:
             df = df[["date", score_column, "player"]]
         except KeyError:
-            print(
+            raise KeyError(
                 "PLEASE include 'date' and {} in your df as headers".format(
                     score_column
                 )
@@ -56,10 +66,14 @@ class Elo:
         for game_date in df["date"].unique():
             # 1
             if game_date not in self.games_completed:
-                print("EVALUATING {}".format(game_date))
+                logging.info("EVALUATING {}".format(game_date))
                 self.set_key(game_date)
                 # 2
                 current_df = df.loc[df["date"] == game_date].copy()
+                # 2a
+                current_df = current_df.loc[
+                    ~current_df[["date", "player"]].duplicated(keep="last")
+                ].copy()
                 # 3
                 current_df.index = current_df["player"].str.strip()
                 # 4
@@ -87,7 +101,7 @@ class Elo:
             {self._key: self.ratingDict[name]["ELO"]}
         )
 
-    def show_elo(self, drop=True, game_count=True):
+    def show_elo(self, drop=True, game_count=True, show_last_played=False):
         """
         returns the current elos as a pd.df
 
@@ -112,7 +126,10 @@ class Elo:
                 len(self.ratingDict[x]["historical"]) - 1
                 for x in self.active_elo["Player"]
             ]
-
+        if show_last_played:
+            self.active_elo = self.active_elo.set_index("Player").merge(
+                self.get_last_time_played(True), left_index=True, right_index=True
+            )
         return self.active_elo.round(0)
 
     def get_elo(self, player_name):
@@ -181,7 +198,7 @@ class Elo:
                     self.addPlayer(x)
                     df.loc[x, "starting_elo"] = self.get_elo(x)
                 except:
-                    print("Could not grab ELO")
+                    logging.error("Could not grab ELO. In Process Elo Function")
         # 4
         for x in df.index:
             opp_elos[x] = list(df.loc[df.index != x]["starting_elo"].values)
@@ -298,7 +315,7 @@ class Elo:
 
         return df
 
-    def get_df(self, add_start=False, drop_inactive=False):
+    def get_df(self, drop_inactive=False):
         """
         Creates as pd.df of all historical ELOs (does not include
         starting ELO - 1500 -  in the DF).
@@ -312,28 +329,23 @@ class Elo:
         """
         players = pd.DataFrame(index=pd.to_datetime(self.games_completed))
         players.index.name = "date"
+        # players.index = pd.to_datetime(players.index).strftime("%m/%d/%Y")
 
         for p in self.ratingDict:
-            d = []
-            e = []
-            for elo in self.ratingDict[p]["historical"]:
-                d.append(list(elo.keys())[0])
-                e.append(list(elo.values())[0])
-            indv = pd.DataFrame(e, index=pd.to_datetime(d), columns=[p])
-            indv.index.name = "date"
-            indv = indv.reset_index()
-            players = players.merge(indv.drop(0, axis=0), how="outer", on="date")
+            items = [(l.keys(), l.values()) for l in self.ratingDict[p]["historical"]]
+            df = pd.DataFrame(items)
+            df[0] = df[0].apply(pd.Series)
+            df[1] = df[1].apply(pd.Series)
+            df = df.rename(columns={0: "date", 1: p})
+            df = df.set_index("date")
+            df.index = pd.to_datetime(df.index)
+            # df.index = pd.to_datetime(df.index).strftime("%m/%d/%Y")
+            players = pd.concat([players, df.iloc[1:]], axis=1)
             # format the created df
-            players.index = players["date"]
-            players = players.drop("date", axis=1)
             players = players.sort_index()
             players = players.dropna(axis=0, how="all")
             players = players.fillna(method="ffill")
 
-        if add_start:
-            # add optional start column
-            players.loc["start"] = np.ones(len(players.columns)) * 1500
-            players = players.loc[["start"] + list(players.index.drop("start"))]
         if drop_inactive:
             self.inactive_players = (
                 (players.tail(4).diff().sum() == 0)
@@ -346,10 +358,9 @@ class Elo:
             self.inactive_players = list(self.inactive_players)
             for player in new_players:
                 self.inactive_players.remove(player)
-            return players.drop(columns=self.inactive_players).round(0)
+            players = players.drop(columns=self.inactive_players)
 
-        else:
-            return players.round(0)
+        return players.round(0)
 
     def show_all_players(self) -> pd.DataFrame:
         """
@@ -420,16 +431,14 @@ class Elo:
         return change_df.dropna()
 
     def remove_contest(self, key):
-        self.games_completed.remove(key)
+        if key in self.games_completed:
 
-        for name in self.ratingDict:
-            remove_list = []
-            for contest in self.ratingDict[name]["historical"]:
-                if list(contest.keys())[0] == key:
-                    remove_list.append(contest)
+            for name in self.ratingDict:
+                for contest in self.ratingDict[name]["historical"]:
+                    if list(contest.keys())[0] == key:
+                        self.ratingDict[name]["historical"].remove(contest)
 
-            for remove_contests in remove_list:
-                self.ratingDict[name]["historical"].remove(remove_contests)
+            self.games_completed.remove(key)
 
     def set_elo_to_last_score(self):
         """assigns everyone's elo to the last score"""
@@ -450,3 +459,11 @@ class Elo:
     def lowest_elo(self):
         """returns lowest all time elo"""
         return {self.get_df().min().idxmin(): self.get_df().min().min()}
+
+    def get_last_time_played(self, as_df: bool = False):
+        last_played = {
+            k: list(v["historical"][-1].keys())[0] for k, v in self.ratingDict.items()
+        }
+        if as_df:
+            return pd.DataFrame([last_played]).T
+        return last_played

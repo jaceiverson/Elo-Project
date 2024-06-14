@@ -1,5 +1,13 @@
 import pickle
 from .elo import Elo
+import logging
+
+logging.basicConfig(
+    filename="elo.log",
+    level=logging.INFO,
+    format="[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 
 def pickle_write(file_name, data):
@@ -52,16 +60,17 @@ def generic_league(df, score_column, file_path="./pickled-elo.p", lsw=False, sav
     try:
         league.ratingDict = pickle_read(file_path).ratingDict
         league.games_completed = pickle_read(file_path).games_completed
-        print("LEAGUE FROM PICKLE")
+        logging.info("LEAGUE FROM PICKLE")
     except:
-        print("NEW LEAGUE")
+        logging.info("NEW LEAGUE")
 
     # 3 run the algo
+    logging.info("Updating the ELO object")
     league.run(df, score_column)
 
     # 4 save for later
     if save:
-        print("SAVING")
+        logging.info("SAVING")
         pickle_write(file_path, league)
     # 5
     return league
